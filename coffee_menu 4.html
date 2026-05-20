@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>mix & co — Кофейня</title>
+<meta name="theme-color" content="#4A6147">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EFF4EE;--bg2:#E4EDE2;--surface:#F5F9F4;
+  --green:#4A6147;--green2:#7A9B76;--green3:#c8dac5;
+  --text:#2d3d2b;--text2:#5a7a57;--border:#D4E4D1;
+  --accent:#7fa87a;--shadow:#4A614722;--modal-bg:rgba(20,40,18,.55);
+}
+[data-theme="dark"]{
+  --bg:#161e15;--bg2:#1c271b;--surface:#1f2e1e;
+  --green:#8aba85;--green2:#6a9866;--green3:#3a5438;
+  --text:#d4e8d1;--text2:#8ab586;--border:#2a3d29;
+  --accent:#7eba79;--shadow:#00000055;--modal-bg:rgba(0,0,0,.72);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Jost',sans-serif;background:var(--bg);color:var(--text);font-weight:300;transition:background .3s,color .3s;}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none;min-height:100vh;}
+.page.active{display:block;}
+
+/* ── HERO ── */
+.hero{background:var(--green);color:var(--bg);text-align:center;padding:2.5rem 1.5rem 2rem;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,#ffffff14,transparent 65%);pointer-events:none;}
+.hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;position:relative;z-index:1;}
+.hero-actions{display:flex;gap:8px;}
+.icon-btn{background:#ffffff18;border:none;border-radius:50%;width:38px;height:38px;cursor:pointer;color:inherit;display:flex;align-items:center;justify-content:center;font-size:17px;transition:background .2s;flex-shrink:0;}
+.icon-btn:hover{background:#ffffff2e;}
+.logo-wrap{position:relative;z-index:1;}
+.logo-circle{width:92px;height:92px;border-radius:50%;background:#5d8459;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.25rem;box-shadow:0 6px 28px #00000028;cursor:pointer;transition:transform .2s;}
+.logo-circle:hover{transform:scale(1.04);}
+.logo-main{font-weight:700;font-size:17px;letter-spacing:-.5px;color:#F5F9F4;}
+.logo-sub{font-weight:300;font-size:9px;letter-spacing:3.5px;color:#c8dac5;margin-top:3px;}
+.hero-divider{width:36px;height:1px;background:var(--green3);margin:0 auto 1.25rem;opacity:.5;}
+.hero-info{display:flex;justify-content:center;gap:1.25rem;font-size:12px;color:#c8dac59a;flex-wrap:wrap;}
+.hero-info a{color:inherit;text-decoration:none;}
+
+/* ── SEARCH ── */
+.search-wrap{background:var(--green);padding:0 1rem .85rem;}
+.search-box{display:flex;align-items:center;gap:8px;background:#ffffff12;border-radius:2rem;padding:.48rem 1rem;max-width:480px;margin:0 auto;border:1px solid #ffffff0e;}
+.search-box input{flex:1;background:none;border:none;outline:none;color:#e8f4e6;font-family:'Jost',sans-serif;font-size:13px;}
+.search-box input::placeholder{color:#ffffff44;}
+.search-clear{background:none;border:none;color:#ffffff55;cursor:pointer;font-size:16px;padding:0;display:none;}
+.search-clear.show{display:block;}
+
+/* ── NAV ── */
+.nav-wrap{position:sticky;top:0;z-index:100;background:var(--green);border-bottom:1px solid #ffffff0d;}
+.nav{display:flex;overflow-x:auto;scrollbar-width:none;-ms-overflow-style:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{flex-shrink:0;color:#c8dac566;background:none;border:none;border-bottom:2px solid transparent;font-size:11px;letter-spacing:.15em;text-transform:uppercase;font-weight:500;padding:.85rem 1rem;transition:color .2s;white-space:nowrap;cursor:pointer;font-family:'Jost',sans-serif;}
+.nav-btn:hover,.nav-btn.active{color:var(--green3);border-bottom-color:var(--green3);}
+
+/* ── SECTION ── */
+.section{padding:2.5rem 1rem .5rem;max-width:680px;margin:0 auto;}
+.section-header{display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;}
+.section-header h2{font-family:'Playfair Display',serif;font-size:clamp(1.35rem,4vw,1.85rem);font-weight:400;font-style:italic;color:var(--text);white-space:nowrap;}
+.section-line{flex:1;height:1px;background:linear-gradient(to right,var(--border),transparent);}
+
+/* ── ITEMS ── */
+.items{display:flex;flex-direction:column;}
+.item{display:grid;grid-template-columns:82px 1fr auto;gap:12px;align-items:center;padding:.85rem 0;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s,padding .15s,margin .15s;}
+.item:last-child{border-bottom:none;}
+.item:hover{background:var(--bg2);margin:0 -.75rem;padding-left:.75rem;padding-right:.75rem;border-radius:10px;border-bottom:none;}
+.item-thumb{width:82px;height:72px;border-radius:10px;object-fit:cover;background:var(--border);display:block;flex-shrink:0;}
+.item-body{min-width:0;}
+.item-name{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px;line-height:1.3;}
+.item-desc{font-size:11.5px;color:var(--text2);line-height:1.45;opacity:.8;}
+.item-tags{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap;}
+.tag{font-size:9px;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:20px;font-weight:500;}
+.tag-hot{background:#c07a4018;color:#c07a40;}
+.tag-cold{background:#3a8aaa18;color:#3a8aaa;}
+.tag-new{background:var(--accent);color:#fff;}
+.tag-veg{background:#5a9a4018;color:#5a9a40;}
+.item-right{text-align:right;flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
+.item-price{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;}
+.item-volume{font-size:10px;color:var(--text2);opacity:.55;}
+.add-btn{background:var(--green);color:#fff;border:none;border-radius:50%;width:30px;height:30px;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s,background .15s;flex-shrink:0;line-height:1;}
+.add-btn:hover{background:var(--accent);transform:scale(1.1);}
+.add-btn:active{transform:scale(.88);}
+.no-results{text-align:center;padding:3.5rem 1rem;color:var(--text2);font-size:14px;opacity:.6;}
+.ornament{text-align:center;padding:1.5rem 0 0;opacity:.12;font-size:1.1rem;color:var(--text2);letter-spacing:.5em;}
+
+/* ── ABOUT PAGE ── */
+.about-hero{background:var(--green);padding:2.5rem 1.5rem 3rem;text-align:center;position:relative;overflow:hidden;}
+.about-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,#ffffff14,transparent 65%);pointer-events:none;}
+.about-hero-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem;position:relative;z-index:1;}
+.about-logo{font-family:'Playfair Display',serif;font-size:2.5rem;font-style:italic;color:#F5F9F4;font-weight:700;position:relative;z-index:1;}
+.about-tagline{font-size:13px;color:#c8dac5aa;letter-spacing:.2em;text-transform:uppercase;position:relative;z-index:1;}
+
+.about-body{max-width:640px;margin:0 auto;padding:2.5rem 1.25rem;}
+
+.about-story{margin-bottom:3rem;}
+.about-story h3{font-family:'Playfair Display',serif;font-size:1.6rem;font-style:italic;color:var(--text);margin-bottom:1rem;font-weight:400;}
+.about-story p{font-size:14px;line-height:1.85;color:var(--text2);margin-bottom:1rem;}
+
+.about-photo-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2rem 0;}
+.about-photo-row img{width:100%;height:160px;object-fit:cover;border-radius:14px;background:var(--border);}
+.about-photo-row img:first-child{grid-column:1/-1;height:220px;}
+
+.about-values{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:3rem;}
+.value-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;text-align:center;}
+.value-card .vi{font-size:2rem;margin-bottom:.5rem;}
+.value-card h4{font-size:13px;font-weight:500;color:var(--text);margin-bottom:.35rem;}
+.value-card p{font-size:11.5px;color:var(--text2);line-height:1.5;opacity:.85;}
+
+.about-team{margin-bottom:3rem;}
+.about-team h3{font-family:'Playfair Display',serif;font-size:1.5rem;font-style:italic;color:var(--text);margin-bottom:1.25rem;font-weight:400;}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.team-card{text-align:center;}
+.team-avatar{width:70px;height:70px;border-radius:50%;background:var(--bg2);margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;font-size:2rem;border:2px solid var(--border);}
+.team-name{font-size:12px;font-weight:500;color:var(--text);}
+.team-role{font-size:11px;color:var(--text2);opacity:.7;margin-top:2px;}
+
+.about-info{background:var(--green);border-radius:16px;padding:1.5rem;color:#c8dac5;margin-bottom:2rem;}
+.about-info h3{font-family:'Playfair Display',serif;font-size:1.25rem;font-style:italic;color:#F5F9F4;margin-bottom:1rem;font-weight:400;}
+.info-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:.75rem;font-size:13px;}
+.info-row:last-child{margin-bottom:0;}
+.info-icon{font-size:16px;flex-shrink:0;margin-top:1px;}
+.info-text{line-height:1.5;opacity:.85;}
+.info-text a{color:inherit;}
+
+.about-menu-btn{display:block;width:100%;background:var(--green);color:#fff;border:none;border-radius:2rem;padding:1rem;font-family:'Jost',sans-serif;font-size:15px;font-weight:500;cursor:pointer;text-align:center;transition:background .2s;margin-bottom:3rem;}
+.about-menu-btn:hover{background:var(--accent);}
+
+/* ── CART ── */
+.cart-fab{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--green);color:#fff;border:none;border-radius:2rem;padding:.7rem 1.2rem;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;cursor:pointer;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px var(--shadow);z-index:200;transition:transform .15s;}
+.cart-fab:hover{transform:scale(1.03);}
+.cart-fab.visible{display:flex;}
+.cart-badge{background:var(--accent);color:#fff;border-radius:50%;width:20px;height:20px;font-size:11px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+
+/* ── FLY DOT ── */
+.fly-dot{position:fixed;width:10px;height:10px;border-radius:50%;background:var(--accent);pointer-events:none;z-index:9999;}
+
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:var(--modal-bg);z-index:300;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--surface);width:100%;max-width:480px;border-radius:1.25rem 1.25rem 0 0;padding:1.25rem 1.25rem 2rem;animation:slideUp .25s ease;max-height:92vh;overflow-y:auto;}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1.25rem;}
+.modal-img{width:100%;height:200px;object-fit:cover;border-radius:12px;margin-bottom:1rem;background:var(--border);}
+.modal-name{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:var(--text);margin-bottom:.35rem;}
+.modal-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:.5rem;}
+.modal-price{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;color:var(--text);margin-bottom:1.25rem;}
+.modal-actions{display:flex;gap:.75rem;align-items:center;}
+.qty-ctrl{display:flex;align-items:center;gap:.5rem;background:var(--bg2);border-radius:2rem;padding:.3rem .75rem;}
+.qty-ctrl button{background:none;border:none;font-size:18px;cursor:pointer;color:var(--text);width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-weight:700;}
+.qty-ctrl span{font-size:15px;font-weight:500;min-width:18px;text-align:center;color:var(--text);}
+.modal-add-btn{flex:1;background:var(--green);color:#fff;border:none;border-radius:2rem;padding:.78rem 1.5rem;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;}
+.modal-add-btn:hover{background:var(--accent);}
+.modal-add-btn:disabled{opacity:.5;cursor:not-allowed;}
+
+/* ── CART MODAL ── */
+.cart-item-row{display:flex;justify-content:space-between;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--border);font-size:14px;gap:.5rem;}
+.cart-item-row:last-child{border-bottom:none;}
+.cart-item-name{flex:1;font-weight:500;color:var(--text);}
+.cart-item-qty{color:var(--text2);font-size:13px;margin:0 .4rem;}
+.cart-item-price{font-weight:700;color:var(--text);white-space:nowrap;}
+.cart-remove{background:none;border:none;color:var(--text2);font-size:18px;cursor:pointer;opacity:.35;padding:0 4px;line-height:1;}
+.cart-remove:hover{opacity:1;color:#d44;}
+.cart-total{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:700;color:var(--text);text-align:right;padding-top:1rem;border-top:1px solid var(--border);margin-top:.5rem;}
+.cart-empty{text-align:center;color:var(--text2);opacity:.55;padding:2rem 0;font-size:14px;}
+.order-fields{margin-bottom:.75rem;}
+.order-fields label{font-size:11px;color:var(--text2);letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:4px;margin-top:12px;}
+.order-fields input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:.55rem .85rem;font-family:'Jost',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border .2s;}
+.order-fields input:focus{border-color:var(--green);}
+
+/* ── STATUS SCREEN ── */
+.status-screen{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:2rem;text-align:center;}
+.status-screen.open{display:flex;}
+.status-icon{font-size:4rem;margin-bottom:1.5rem;animation:pop .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes pop{from{transform:scale(.4);opacity:0;}to{transform:scale(1);opacity:1;}}
+.status-title{font-family:'Playfair Display',serif;font-size:1.9rem;font-weight:700;color:var(--text);margin-bottom:.4rem;}
+.status-sub{font-size:14px;color:var(--text2);margin-bottom:2rem;line-height:1.7;max-width:300px;}
+.status-order-id{font-size:11px;color:var(--text2);opacity:.45;margin-bottom:1.75rem;letter-spacing:.08em;}
+.status-steps{display:flex;width:100%;max-width:340px;margin-bottom:2.5rem;}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;}
+.step:not(:last-child)::after{content:'';position:absolute;top:13px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;transition:background .6s;}
+.step.done:not(:last-child)::after{background:var(--accent);}
+.step-dot{width:28px;height:28px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:11px;z-index:1;transition:background .4s,color .4s,box-shadow .4s;color:var(--text2);font-weight:600;}
+.step.done .step-dot{background:var(--accent);color:#fff;}
+.step.active .step-dot{background:var(--green);color:#fff;box-shadow:0 0 0 5px var(--green3);}
+.step-label{font-size:10px;color:var(--text2);letter-spacing:.04em;text-align:center;}
+.status-back-btn{background:var(--green);color:#fff;border:none;border-radius:2rem;padding:.78rem 2.25rem;font-family:'Jost',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;}
+.status-back-btn:hover{background:var(--accent);}
+
+/* ── FOOTER ── */
+footer{background:var(--green);color:#c8dac555;text-align:center;padding:3rem 1.5rem;margin-top:4rem;font-size:12px;letter-spacing:.1em;}
+footer .footer-name{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--green3);font-style:italic;display:block;margin-bottom:1rem;}
+footer a{color:#c8dac555;text-decoration:none;}
+footer a:hover{color:var(--green3);}
+footer .footer-links{display:flex;justify-content:center;gap:2rem;margin-top:1rem;flex-wrap:wrap;}
+.footer-about-btn{background:none;border:1px solid #c8dac533;color:#c8dac577;border-radius:2rem;padding:.4rem 1rem;font-family:'Jost',sans-serif;font-size:11px;cursor:pointer;letter-spacing:.08em;text-transform:uppercase;transition:all .2s;margin-top:1rem;}
+.footer-about-btn:hover{border-color:var(--green3);color:var(--green3);}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     PAGE: MENU
+═══════════════════════════════════════════ -->
+<div class="page active" id="page-menu">
+
+<header class="hero">
+  <div class="hero-top">
+    <button class="icon-btn" id="aboutBtn" title="О нас">🌿</button>
+    <div class="hero-actions">
+      <button class="icon-btn" id="themeBtn">🌙</button>
+    </div>
+  </div>
+  <div class="logo-wrap">
+    <div class="logo-circle" id="logoBtn">
+      <span class="logo-main">mix & co</span>
+      <span class="logo-sub">flowers and coffee</span>
+    </div>
+    <div class="hero-divider"></div>
+    <div class="hero-info">
+      <span>📍 ул. Ленина, 19</span>
+      <span>🕒 09:00–22:00</span>
+      <span>📸 <a href="https://instagram.com/mix.and.co">@mix.and.co</a></span>
+    </div>
+  </div>
+</header>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span>🔍</span>
+    <input type="text" id="searchInput" placeholder="Найти блюдо или напиток…" autocomplete="off">
+    <button class="search-clear" id="searchClear">✕</button>
+  </div>
+</div>
+
+<nav class="nav-wrap">
+  <div class="nav" id="mainNav">
+    <button class="nav-btn active" data-target="espresso">Эспрессо</button>
+    <button class="nav-btn" data-target="filter">Фильтр</button>
+    <button class="nav-btn" data-target="cold">Холодный</button>
+    <button class="nav-btn" data-target="matcha">Матча & Чай</button>
+    <button class="nav-btn" data-target="food">Еда</button>
+    <button class="nav-btn" data-target="desert">Десерты</button>
+    <button class="nav-btn" data-target="breakfast">Завтраки</button>
+  </div>
+</nav>
+
+<!-- ЭСПРЕССО -->
+<section class="section" id="espresso">
+  <div class="section-header"><h2>Эспрессо</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Эспрессо" data-desc="Двойной шот, насыщенный, с орехово-карамельным послевкусием" data-price="120" data-vol="30 / 60 мл" data-photo="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Эспрессо</div><div class="item-desc">Двойной шот, насыщенный, с орехово-карамельным послевкусием</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">120 ₽</div><div class="item-volume">30 / 60 мл</div></div>
+    </div>
+    <div class="item" data-name="Американо" data-desc="Эспрессо, разбавленный горячей водой" data-price="180" data-vol="200 / 350 мл" data-photo="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Американо</div><div class="item-desc">Эспрессо, разбавленный горячей водой</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">180 ₽</div><div class="item-volume">200 / 350 мл</div></div>
+    </div>
+    <div class="item" data-name="Капучино" data-desc="Эспрессо с бархатистой молочной пеной" data-price="220" data-vol="200 / 350 мл" data-photo="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Капучино</div><div class="item-desc">Эспрессо с бархатистой молочной пеной</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">220 ₽</div><div class="item-volume">200 / 350 мл</div></div>
+    </div>
+    <div class="item" data-name="Латте" data-desc="Мягкий и сливочный, двойной шот с молоком" data-price="240" data-vol="300 / 450 мл" data-photo="https://images.unsplash.com/photo-1561047029-3000c68339ca?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1561047029-3000c68339ca?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Латте</div><div class="item-desc">Мягкий и сливочный, двойной шот с молоком</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">240 ₽</div><div class="item-volume">300 / 450 мл</div></div>
+    </div>
+    <div class="item" data-name="Флэт Уайт" data-desc="Ристретто с минимальной пеной, насыщенный вкус" data-price="250" data-vol="200 мл" data-photo="https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Флэт Уайт</div><div class="item-desc">Ристретто с минимальной пеной, насыщенный вкус</div><div class="item-tags"><span class="tag tag-hot">Горячий</span><span class="tag tag-new">Хит</span></div></div>
+      <div class="item-right"><div class="item-price">250 ₽</div><div class="item-volume">200 мл</div></div>
+    </div>
+    <div class="item" data-name="Раф «Ваниль»" data-desc="Эспрессо, сливки 33%, ванильный сахар — взбитый вместе" data-price="290" data-vol="300 мл" data-photo="https://images.unsplash.com/photo-1518057111178-44a106bad636?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1518057111178-44a106bad636?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Раф «Ваниль»</div><div class="item-desc">Эспрессо, сливки 33%, ванильный сахар — взбитый вместе</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">290 ₽</div><div class="item-volume">300 мл</div></div>
+    </div>
+    <div class="item" data-name="Раф «Пряная карамель»" data-desc="Авторский раф с корицей, кардамоном и соленой карамелью" data-price="310" data-vol="300 мл" data-photo="https://images.unsplash.com/photo-1541167760496-1628856ab772?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1541167760496-1628856ab772?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Раф «Пряная карамель»</div><div class="item-desc">Авторский раф с корицей, кардамоном и соленой карамелью</div><div class="item-tags"><span class="tag tag-hot">Горячий</span><span class="tag tag-new">Хит</span></div></div>
+      <div class="item-right"><div class="item-price">310 ₽</div><div class="item-volume">300 мл</div></div>
+    </div>
+  </div>
+</section>
+<div class="ornament">✦ ✦ ✦</div>
+
+<!-- ФИЛЬТР -->
+<section class="section" id="filter">
+  <div class="section-header"><h2>Фильтр-кофе</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Пуровер V60" data-desc="Этиопия Йргачеф — цветочные ноты, персик, чёрный чай" data-price="260" data-vol="250 мл" data-photo="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Пуровер V60</div><div class="item-desc">Этиопия Йргачеф — цветочные ноты, персик, чёрный чай</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">260 ₽</div><div class="item-volume">250 мл</div></div>
+    </div>
+    <div class="item" data-name="Аэропресс" data-desc="Кения АА — тёмная вишня, смородина, длинное послевкусие" data-price="270" data-vol="200 мл" data-photo="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1511920170033-f8396924c348?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Аэропресс</div><div class="item-desc">Кения АА — тёмная вишня, смородина, длинное послевкусие</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">270 ₽</div><div class="item-volume">200 мл</div></div>
+    </div>
+    <div class="item" data-name="Кемекс" data-desc="Колумбия Уила — карамель, орех, нежная кислотность" data-price="280" data-vol="400 мл" data-photo="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Кемекс</div><div class="item-desc">Колумбия Уила — карамель, орех, нежная кислотность</div><div class="item-tags"><span class="tag tag-hot">Горячий</span><span class="tag tag-new">Новинка</span></div></div>
+      <div class="item-right"><div class="item-price">280 ₽</div><div class="item-volume">400 мл</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ХОЛОДНЫЙ -->
+<section class="section" id="cold">
+  <div class="section-header"><h2>Холодный кофе</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Айс Латте" data-desc="Эспрессо со льдом и холодным молоком" data-price="260" data-vol="350 мл" data-photo="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Айс Латте</div><div class="item-desc">Эспрессо со льдом и холодным молоком</div><div class="item-tags"><span class="tag tag-cold">Холодный</span></div></div>
+      <div class="item-right"><div class="item-price">260 ₽</div><div class="item-volume">350 мл</div></div>
+    </div>
+    <div class="item" data-name="Колд Брю" data-desc="12-часовое холодное заваривание, шоколад и орех" data-price="290" data-vol="250 мл" data-photo="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1544145945-f90425340c7e?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Колд Брю</div><div class="item-desc">12-часовое холодное заваривание, шоколад и орех</div><div class="item-tags"><span class="tag tag-cold">Холодный</span></div></div>
+      <div class="item-right"><div class="item-price">290 ₽</div><div class="item-volume">250 мл</div></div>
+    </div>
+    <div class="item" data-name="Нитро Колд Брю" data-desc="Колд брю на азоте — бархатистая пена, без сахара" data-price="320" data-vol="250 мл" data-photo="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Нитро Колд Брю</div><div class="item-desc">Колд брю на азоте — бархатистая пена, без сахара</div><div class="item-tags"><span class="tag tag-cold">Холодный</span><span class="tag tag-new">Хит</span></div></div>
+      <div class="item-right"><div class="item-price">320 ₽</div><div class="item-volume">250 мл</div></div>
+    </div>
+    <div class="item" data-name="Шейкерато" data-desc="Эспрессо с сахарным сиропом, взбитый со льдом" data-price="280" data-vol="180 мл" data-photo="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Шейкерато</div><div class="item-desc">Эспрессо с сахарным сиропом, взбитый со льдом</div><div class="item-tags"><span class="tag tag-cold">Холодный</span></div></div>
+      <div class="item-right"><div class="item-price">280 ₽</div><div class="item-volume">180 мл</div></div>
+    </div>
+  </div>
+</section>
+<div class="ornament">✦ ✦ ✦</div>
+
+<!-- МАТЧА -->
+<section class="section" id="matcha">
+  <div class="section-header"><h2>Матча & Чай</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Матча Латте" data-desc="Японский церемониальный порошок, взбитый с молоком" data-price="290" data-vol="300 мл" data-photo="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Матча Латте</div><div class="item-desc">Японский церемониальный порошок, взбитый с молоком</div><div class="item-tags"><span class="tag tag-veg">Веган</span></div></div>
+      <div class="item-right"><div class="item-price">290 ₽</div><div class="item-volume">300 мл</div></div>
+    </div>
+    <div class="item" data-name="Айс Матча" data-desc="Матча со льдом и растительным молоком" data-price="300" data-vol="350 мл" data-photo="https://images.unsplash.com/photo-1582396686780-07e84433af80?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1582396686780-07e84433af80?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Айс Матча</div><div class="item-desc">Матча со льдом и растительным молоком</div><div class="item-tags"><span class="tag tag-cold">Холодный</span><span class="tag tag-veg">Веган</span></div></div>
+      <div class="item-right"><div class="item-price">300 ₽</div><div class="item-volume">350 мл</div></div>
+    </div>
+    <div class="item" data-name="Чай авторский" data-desc="Сезонный купаж — уточняйте у бариста" data-price="220" data-vol="350 мл" data-photo="https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Чай авторский</div><div class="item-desc">Сезонный купаж — уточняйте у бариста</div><div class="item-tags"><span class="tag tag-hot">Горячий</span></div></div>
+      <div class="item-right"><div class="item-price">220 ₽</div><div class="item-volume">350 мл</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ЕДА -->
+<section class="section" id="food">
+  <div class="section-header"><h2>Еда</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Бутерброд с лососем" data-desc="Слабосоленый лосось, творожный сыр, каперсы, ржаной хлеб" data-price="390" data-photo="https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1519984388953-d2406bc725e1?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Бутерброд с лососем</div><div class="item-desc">Слабосоленый лосось, творожный сыр, каперсы, ржаной хлеб</div></div>
+      <div class="item-right"><div class="item-price">390 ₽</div></div>
+    </div>
+    <div class="item" data-name="Авокадо тост" data-desc="Тост на закваске, авокадо, яйцо пашот, микрозелень" data-price="420" data-photo="https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1541519227354-08fa5d50c820?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Авокадо тост</div><div class="item-desc">Тост на закваске, авокадо, яйцо пашот, микрозелень</div><div class="item-tags"><span class="tag tag-new">Хит</span></div></div>
+      <div class="item-right"><div class="item-price">420 ₽</div></div>
+    </div>
+    <div class="item" data-name="Сэндвич с курицей" data-desc="Хрустящая курица, соус айоли, руккола, томат черри" data-price="360" data-photo="https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1553909489-cd47e0907980?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Сэндвич с курицей</div><div class="item-desc">Хрустящая курица, соус айоли, руккола, томат черри</div></div>
+      <div class="item-right"><div class="item-price">360 ₽</div></div>
+    </div>
+    <div class="item" data-name="Боул с тунцом" data-desc="Рис, тунец, авокадо, огурец, эдамаме, соус терияки" data-price="560" data-photo="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Боул с тунцом</div><div class="item-desc">Рис, тунец, авокадо, огурец, эдамаме, соус терияки</div></div>
+      <div class="item-right"><div class="item-price">560 ₽</div></div>
+    </div>
+  </div>
+</section>
+<div class="ornament">✦ ✦ ✦</div>
+
+<!-- ДЕСЕРТЫ -->
+<section class="section" id="desert">
+  <div class="section-header"><h2>Десерты</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Круассан с миндалём" data-desc="Собственная выпечка, хрустящий, с миндальным кремом" data-price="240" data-photo="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Круассан с миндалём</div><div class="item-desc">Собственная выпечка, хрустящий, с миндальным кремом</div><div class="item-tags"><span class="tag tag-new">Хит</span></div></div>
+      <div class="item-right"><div class="item-price">240 ₽</div></div>
+    </div>
+    <div class="item" data-name="Тарт с лимонным курдом" data-desc="Кисло-сладкий курд, хрустящее песочное тесто" data-price="280" data-photo="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Тарт с лимонным курдом</div><div class="item-desc">Кисло-сладкий курд, хрустящее песочное тесто</div></div>
+      <div class="item-right"><div class="item-price">280 ₽</div></div>
+    </div>
+    <div class="item" data-name="Чизкейк «Нью-Йорк»" data-desc="Классический, с ягодным кули" data-price="320" data-photo="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Чизкейк «Нью-Йорк»</div><div class="item-desc">Классический, с ягодным кули</div></div>
+      <div class="item-right"><div class="item-price">320 ₽</div></div>
+    </div>
+    <div class="item" data-name="Шоколадный брауни" data-desc="Бельгийский шоколад, мягкая текстура, шарик мороженого" data-price="290" data-photo="https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1564355808539-22fda35bed7e?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Шоколадный брауни</div><div class="item-desc">Бельгийский шоколад, мягкая текстура, шарик мороженого</div></div>
+      <div class="item-right"><div class="item-price">290 ₽</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ЗАВТРАКИ -->
+<section class="section" id="breakfast">
+  <div class="section-header"><h2>Завтраки</h2><div class="section-line"></div></div>
+  <div class="items">
+    <div class="item" data-name="Омлет с козьим сыром" data-desc="Три яйца, козий сыр, свежий шпинат, тост на закваске" data-price="390" data-photo="https://images.unsplash.com/photo-1510693206972-df098062cb71?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1510693206972-df098062cb71?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Омлет с козьим сыром</div><div class="item-desc">Три яйца, козий сыр, свежий шпинат, тост на закваске</div><div class="item-tags"><span class="tag tag-veg">Вег</span></div></div>
+      <div class="item-right"><div class="item-price">390 ₽</div></div>
+    </div>
+    <div class="item" data-name="Яйца Бенедикт" data-desc="Яйца пашот, ветчина, голландский соус, маффин" data-price="450" data-photo="https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1608039829572-78524f79c4c7?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Яйца Бенедикт</div><div class="item-desc">Яйца пашот, ветчина, голландский соус, маффин</div><div class="item-tags"><span class="tag tag-new">Хит</span></div></div>
+      <div class="item-right"><div class="item-price">450 ₽</div></div>
+    </div>
+    <div class="item" data-name="Гранола с ягодами" data-desc="Домашняя гранола, греческий йогурт, сезонные ягоды, мёд" data-price="310" data-photo="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=600&q=80">
+      <img class="item-thumb" src="https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=160&q=70" alt="" loading="lazy">
+      <div class="item-body"><div class="item-name">Гранола с ягодами</div><div class="item-desc">Домашняя гранола, греческий йогурт, сезонные ягоды, мёд</div><div class="item-tags"><span class="tag tag-veg">Вег</span></div></div>
+      <div class="item-right"><div class="item-price">310 ₽</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">mix & co</span>
+  <p>ул. Ленина, 19 · Ежедневно 09:00–22:00</p>
+  <div class="footer-links"><a href="https://instagram.com/mix.and.co">Instagram @mix.and.co</a></div>
+  <button class="footer-about-btn" id="footerAboutBtn">О кофейне</button>
+  <p style="margin-top:1.5rem;font-size:10px;opacity:.2;">© 2025 mix & co · flowers and coffee</p>
+</footer>
+
+</div><!-- /page-menu -->
+
+
+<!-- ══════════════════════════════════════════
+     PAGE: ABOUT
+═══════════════════════════════════════════ -->
+<div class="page" id="page-about">
+
+<div class="about-hero">
+  <div class="about-hero-top">
+    <button class="icon-btn" id="backToMenuBtn">←</button>
+    <div class="hero-actions">
+      <button class="icon-btn" id="themeBtnAbout">🌙</button>
+    </div>
+  </div>
+  <div class="about-logo">mix & co</div>
+  <div style="height:.5rem"></div>
+  <div class="about-tagline">flowers and coffee</div>
+</div>
+
+<div class="about-body">
+
+  <!-- История -->
+  <div class="about-story">
+    <h3>Наша история</h3>
+    <p>mix & co появился в 2021 году как маленькое место на пересечении двух страстей — свежих цветов и хорошего кофе. Основатели Аня и Марк давно мечтали о пространстве, где утренний латте пахнет не только зёрнами, но и живыми пионами на столе.</p>
+    <p>Сегодня мы — небольшая кофейня с флористической мастерской в сердце города. Каждое утро мы привозим свежие цветы с рынка и обжариваем зёрна в своём цехе. Никаких компромиссов — ни в букетах, ни в чашке.</p>
+    <p>Мы верим, что красота и вкус живут рядом — и наш интерьер, меню и даже упаковка на вынос говорят именно об этом.</p>
+  </div>
+
+  <!-- Фото -->
+  <div class="about-photo-row">
+    <img src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=700&q=80" alt="Интерьер кофейни" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=400&q=80" alt="Приготовление кофе" loading="lazy">
+    <img src="https://images.unsplash.com/photo-1487530811015-780780169b4e?w=400&q=80" alt="Цветы" loading="lazy">
+  </div>
+
+  <!-- Ценности -->
+  <div class="about-values">
+    <div class="value-card"><div class="vi">☕</div><h4>Specialty кофе</h4><p>Только зёрна от проверенных ферм. Обжарка раз в неделю, свежесть — в каждой чашке.</p></div>
+    <div class="value-card"><div class="vi">🌸</div><h4>Живые цветы</h4><p>Свежие букеты каждое утро. Можно купить с собой или заказать под событие.</p></div>
+    <div class="value-card"><div class="vi">🌱</div><h4>Экологично</h4><p>Биоразлагаемые стаканы, отказ от пластика, овощи от местных фермеров.</p></div>
+    <div class="value-card"><div class="vi">🤍</div><h4>Своя кухня</h4><p>Выпечка, авокадо тосты и десерты — всё готовим сами каждое утро.</p></div>
+  </div>
+
+  <!-- Команда -->
+  <div class="about-team">
+    <h3>Команда</h3>
+    <div class="team-grid">
+      <div class="team-card"><div class="team-avatar">👩‍🍳</div><div class="team-name">Аня</div><div class="team-role">Основатель, флорист</div></div>
+      <div class="team-card"><div class="team-avatar">👨‍💻</div><div class="team-name">Марк</div><div class="team-role">Основатель, бариста</div></div>
+      <div class="team-card"><div class="team-avatar">👩‍🍳</div><div class="team-name">Соня</div><div class="team-role">Шеф-кондитер</div></div>
+    </div>
+  </div>
+
+  <!-- Контакты -->
+  <div class="about-info">
+    <h3>Как нас найти</h3>
+    <div class="info-row"><span class="info-icon">📍</span><span class="info-text">ул. Ленина, 19 — центр города, рядом с парком</span></div>
+    <div class="info-row"><span class="info-icon">🕒</span><span class="info-text">Ежедневно с 09:00 до 22:00<br>Кухня до 21:30</span></div>
+    <div class="info-row"><span class="info-icon">📸</span><span class="info-text"><a href="https://instagram.com/mix.and.co">@mix.and.co</a> — новинки, букеты, события</span></div>
+    <div class="info-row"><span class="info-icon">💬</span><span class="info-text">Бронирование стола и заказ букетов — в директ Instagram</span></div>
+  </div>
+
+  <button class="about-menu-btn" id="goToMenuBtn">Смотреть меню →</button>
+
+</div>
+</div><!-- /page-about -->
+
+
+<!-- ══ MODALS (общие для всех страниц) ══ -->
+
+<!-- Item modal -->
+<div class="modal-overlay" id="itemModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <img class="modal-img" id="modalImg" src="" alt="" style="display:none;">
+    <div class="modal-name" id="modalName"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <div class="modal-price" id="modalPrice"></div>
+    <div class="modal-actions">
+      <div class="qty-ctrl">
+        <button id="qtyMinus">−</button>
+        <span id="qtyVal">1</span>
+        <button id="qtyPlus">+</button>
+      </div>
+      <button class="modal-add-btn" id="modalAddBtn">Добавить в заказ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cart modal -->
+<div class="modal-overlay" id="cartModal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-name" style="margin-bottom:.75rem;">Ваш заказ</div>
+    <div class="order-fields">
+      <label>Ваше имя</label>
+      <input type="text" id="orderName" placeholder="Имя">
+      <label>Номер стола</label>
+      <input type="text" id="orderTable" placeholder="Например: стол 3">
+    </div>
+    <div id="cartList"></div>
+    <div class="cart-total" id="cartTotal"></div>
+    <button class="modal-add-btn" id="sendOrderBtn" style="width:100%;margin-top:1rem;display:none;">Отправить заказ ✈</button>
+  </div>
+</div>
+
+<!-- Status screen -->
+<div class="status-screen" id="statusScreen">
+  <div class="status-icon" id="statusIcon">☕</div>
+  <div class="status-title">Заказ принят!</div>
+  <div class="status-sub" id="statusSub">Готовим для вас — ожидайте!</div>
+  <div class="status-order-id" id="statusOrderId"></div>
+  <div class="status-steps">
+    <div class="step done" id="st1"><div class="step-dot">✓</div><div class="step-label">Принят</div></div>
+    <div class="step active" id="st2"><div class="step-dot">2</div><div class="step-label">Готовится</div></div>
+    <div class="step" id="st3"><div class="step-dot">3</div><div class="step-label">Готово</div></div>
+    <div class="step" id="st4"><div class="step-dot">☕</div><div class="step-label">Подано</div></div>
+  </div>
+  <button class="status-back-btn" id="statusBackBtn">Вернуться в меню</button>
+</div>
+
+<!-- Floating cart -->
+<button class="cart-fab" id="cartFab">🛒 Корзина <span class="cart-badge" id="cartBadge">0</span></button>
+
+<script>
+/* ══ THEME ══ */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  const icon=t==='dark'?'☀️':'🌙';
+  document.getElementById('themeBtn').textContent=icon;
+  document.getElementById('themeBtnAbout').textContent=icon;
+  try{localStorage.setItem('mixco-theme',t);}catch(e){}
+}
+(function(){
+  let saved='light';
+  try{saved=localStorage.getItem('mixco-theme')||'light';}catch(e){}
+  applyTheme(saved);
+})();
+function toggleTheme(){
+  const cur=document.documentElement.getAttribute('data-theme');
+  applyTheme(cur==='dark'?'light':'dark');
+}
+document.getElementById('themeBtn').addEventListener('click',toggleTheme);
+document.getElementById('themeBtnAbout').addEventListener('click',toggleTheme);
+
+/* ══ PAGE NAVIGATION ══ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo(0,0);
+}
+document.getElementById('aboutBtn').addEventListener('click',()=>showPage('about'));
+document.getElementById('logoBtn').addEventListener('click',()=>showPage('about'));
+document.getElementById('footerAboutBtn').addEventListener('click',()=>showPage('about'));
+document.getElementById('backToMenuBtn').addEventListener('click',()=>showPage('menu'));
+document.getElementById('goToMenuBtn').addEventListener('click',()=>showPage('menu'));
+
+/* ══ NAV BUTTONS ══ */
+const navBtns=document.querySelectorAll('.nav-btn');
+navBtns.forEach(function(btn){
+  btn.addEventListener('click',function(){
+    var target=document.getElementById(btn.dataset.target);
+    if(target){
+      var navH=document.querySelector('.nav-wrap').offsetHeight;
+      var top=target.getBoundingClientRect().top+window.scrollY-navH-8;
+      window.scrollTo({top:top,behavior:'smooth'});
+    }
+  });
+});
+
+/* ══ NAV SCROLL SPY ══ */
+document.querySelectorAll('section[id]').forEach(function(sec){
+  new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting)return;
+      navBtns.forEach(function(b){b.classList.remove('active');});
+      var active=document.querySelector('.nav-btn[data-target="'+e.target.id+'"]');
+      if(active){
+        active.classList.add('active');
+        active.scrollIntoView({inline:'nearest',behavior:'smooth',block:'nearest'});
+      }
+    });
+  },{threshold:.3}).observe(sec);
+});
+
+/* ══ SEARCH ══ */
+const searchInput=document.getElementById('searchInput');
+const searchClear=document.getElementById('searchClear');
+searchInput.addEventListener('input',function(){
+  const q=this.value.trim().toLowerCase();
+  searchClear.classList.toggle('show',q.length>0);
+  let any=false;
+  document.querySelectorAll('.item').forEach(el=>{
+    const match=!q||(el.dataset.name+' '+el.dataset.desc).toLowerCase().includes(q);
+    el.style.display=match?'':'none';
+    if(match)any=true;
+  });
+  document.querySelectorAll('#page-menu .section').forEach(sec=>{
+    const vis=[...sec.querySelectorAll('.item')].some(i=>i.style.display!=='none');
+    sec.style.display=vis?'':'none';
+  });
+  const nr=document.getElementById('noResults');  if(!any&&q){
+    if(!nr){const d=document.createElement('div');d.id='noResults';d.className='no-results';d.textContent='😔 Ничего не найдено';document.querySelector('#page-menu footer').before(d);}
+  } else if(nr)nr.remove();
+});
+searchClear.addEventListener('click',()=>{searchInput.value='';searchInput.dispatchEvent(new Event('input'));searchInput.focus();});
+
+/* ══ CART STATE ══ */
+let cart=[],currentItem=null,qty=1;
+
+function flyToCart(){
+  const fab=document.getElementById('cartFab');
+  const t=fab.getBoundingClientRect();
+  const d=document.createElement('div');
+  d.className='fly-dot';
+  d.style.cssText='left:'+(t.left+t.width/2-5)+'px;top:'+(t.top+t.height/2-5)+'px;transition:none;';
+  document.body.appendChild(d);
+  requestAnimationFrame(()=>{
+    d.style.transition='opacity .5s,transform .5s';
+    d.style.opacity='0';
+    d.style.transform='scale(.1)';
+  });
+  setTimeout(()=>d.remove(),500);
+  setTimeout(()=>{fab.style.transform='scale(1.2)';setTimeout(()=>fab.style.transform='',200);},400);
+}
+
+function updateCartUI(){
+  const total=cart.reduce((s,i)=>s+i.price*i.qty,0);
+  const count=cart.reduce((s,i)=>s+i.qty,0);
+  document.getElementById('cartBadge').textContent=count;
+  document.getElementById('cartFab').classList.toggle('visible',count>0);
+  const list=document.getElementById('cartList');
+  if(!cart.length){
+    list.innerHTML='<div class="cart-empty">Корзина пуста 🛒</div>';
+    document.getElementById('cartTotal').textContent='';
+    document.getElementById('sendOrderBtn').style.display='none';
+  } else {
+    list.innerHTML=cart.map((item,i)=>
+      '<div class="cart-item-row">'+
+      '<span class="cart-item-name">'+item.name+'</span>'+
+      '<span class="cart-item-qty">× '+item.qty+'</span>'+
+      '<span class="cart-item-price">'+(item.price*item.qty)+' ₽</span>'+
+      '<button class="cart-remove" onclick="removeFromCart('+i+')">×</button>'+
+      '</div>'
+    ).join('');
+    document.getElementById('cartTotal').textContent='Итого: '+total+' ₽';
+    document.getElementById('sendOrderBtn').style.display='block';
+  }
+}
+function removeFromCart(i){cart.splice(i,1);updateCartUI();}
+
+/* ══ ITEM CARDS ══ */
+document.querySelectorAll('.item').forEach(function(el){
+  const name=el.dataset.name||'';
+  const desc=el.dataset.desc||'';
+  const price=parseInt(el.dataset.price)||0;
+  const photo=el.dataset.photo||'';
+  el.style.cursor='pointer';
+  const btn=document.createElement('button');
+  btn.className='add-btn';btn.textContent='+';btn.title='Добавить';
+  el.querySelector('.item-right').appendChild(btn);
+  function openModal(e){
+    e.stopPropagation();
+    currentItem={name:name,desc:desc,price:price,photo:photo};
+    qty=1;
+    document.getElementById('modalName').textContent=name;
+    document.getElementById('modalDesc').textContent=desc||'Уточняйте у бариста';
+    document.getElementById('modalPrice').textContent=price+' ₽';
+    document.getElementById('qtyVal').textContent=1;
+    var img=document.getElementById('modalImg');
+    if(photo){img.src=photo;img.style.display='block';}
+    else{img.style.display='none';}
+    document.getElementById('itemModal').classList.add('open');
+  }
+  el.addEventListener('click',openModal);
+  btn.addEventListener('click',function(e){e.stopPropagation();openModal(e);});
+});
+
+document.getElementById('qtyMinus').addEventListener('click',function(){if(qty>1){qty--;document.getElementById('qtyVal').textContent=qty;}});
+document.getElementById('qtyPlus').addEventListener('click',function(){qty++;document.getElementById('qtyVal').textContent=qty;});
+
+document.getElementById('modalAddBtn').addEventListener('click',function(){
+  if(!currentItem)return;
+  var ex=cart.find(function(i){return i.name===currentItem.name;});
+  if(ex)ex.qty+=qty;
+  else cart.push({name:currentItem.name,desc:currentItem.desc,price:currentItem.price,qty:qty});
+  updateCartUI();
+  document.getElementById('itemModal').classList.remove('open');
+  flyToCart();
+});
+
+/* ══ CLOSE MODALS ══ */
+document.getElementById('itemModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+document.getElementById('cartModal').addEventListener('click',function(e){if(e.target===this)this.classList.remove('open');});
+
+/* ══ OPEN CART ══ */
+document.getElementById('cartFab').addEventListener('click',function(){updateCartUI();document.getElementById('cartModal').classList.add('open');});
+
+/* ══ SEND ORDER ══ */
+document.getElementById('sendOrderBtn').addEventListener('click',function(){
+  var name=document.getElementById('orderName').value.trim()||'Гость';
+  var table=document.getElementById('orderTable').value.trim()||'—';
+  var total=cart.reduce(function(s,i){return s+i.price*i.qty;},0);
+  var orderId='#'+Math.floor(Math.random()*9000+1000);
+  document.getElementById('cartModal').classList.remove('open');
+  document.getElementById('statusSub').innerHTML='Заказ на <strong>'+total+' ₽</strong> принят.<br>'+name+' · Стол: '+table;
+  document.getElementById('statusOrderId').textContent='Заказ '+orderId;
+  ['st1','st2','st3','st4'].forEach(function(id,i){
+    document.getElementById(id).className='step'+(i===0?' done':'');
+  });
+  document.getElementById('statusIcon').textContent='☕';
+  document.getElementById('statusScreen').classList.add('open');
+  var cur=1;
+  var timer=setInterval(function(){
+    if(cur>3){clearInterval(timer);return;}
+    document.getElementById('st'+cur).className='step done';
+    cur++;
+    if(cur<=4)document.getElementById('st'+cur).className='step active';
+    if(cur===4)document.getElementById('statusIcon').textContent='✅';
+  },3500);
+  cart=[];
+  updateCartUI();
+  document.getElementById('orderName').value='';
+  document.getElementById('orderTable').value='';
+});
+
+document.getElementById('statusBackBtn').addEventListener('click',function(){
+  document.getElementById('statusScreen').classList.remove('open');
+  showPage('menu');
+});
+
+updateCartUI();
+</script>
+</body>
+</html>
